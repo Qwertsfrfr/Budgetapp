@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 
 const initialTransactions = [
@@ -20,7 +20,7 @@ const initialTransactions = [
     id: 3,
     name: "Scholarship Deposit",
     category: "Income",
-    amount: 850.0,
+    amount: 850,
     time: "Jan 30, 9:02 AM",
   },
   {
@@ -32,140 +32,163 @@ const initialTransactions = [
   },
 ];
 
-const capsules = [
-  { label: "Food", value: 210, limit: 320, accent: "mint" },
-  { label: "Housing", value: 540, limit: 580, accent: "sky" },
-  { label: "Books", value: 88, limit: 160, accent: "peach" },
-  { label: "Transport", value: 120, limit: 150, accent: "lilac" },
+const budgetCapsules = [
+  { label: "Food", value: 210, limit: 320 },
+  { label: "Housing", value: 540, limit: 580 },
+  { label: "Books", value: 88, limit: 160 },
+  { label: "Transport", value: 120, limit: 150 },
+];
+
+const dashboardCards = [
+  {
+    title: "Semester runway",
+    value: "9.4 weeks",
+    detail: "Assuming the last 21 days remain your spending baseline.",
+  },
+  {
+    title: "Safe to spend",
+    value: "$74.26",
+    detail: "After dorm rent, subscriptions, and your buffer transfer.",
+  },
+  {
+    title: "Shared expenses",
+    value: "$132.25",
+    detail: "Three roommate bills tracked with one tap settlement.",
+  },
 ];
 
 const features = [
   {
-    title: "Semester Runway",
-    desc: "Forecast how long your balance lasts based on class weeks and breaks.",
-    tag: "AI Forecast",
-  },
-  {
-    title: "Roommate Split",
-    desc: "Track shared bills and auto-calc who owes who with swipe-ready totals.",
-    tag: "Shared",
-  },
-  {
-    title: "Textbook Watch",
-    desc: "Price alerts for required books and campus deals.",
+    title: "Textbook deal finder",
+    copy: "Required books become tracked items with rental, used, and local resale comparisons.",
     tag: "Savings",
   },
   {
-    title: "Meal Plan Optimizer",
-    desc: "Find the cheapest meal combo and nudge you before swipes expire.",
+    title: "Major resource shelf",
+    copy: "Each major gets a live set of scholarships, free tools, and study assets worth using.",
+    tag: "Academic",
+  },
+  {
+    title: "Meal plan optimizer",
+    copy: "Use expiring swipes first, then shift to cash only when the math actually works.",
     tag: "Campus",
   },
   {
-    title: "Focus Rewards",
-    desc: "Earn streaks for staying under target and lock-in micro-savings.",
-    tag: "Gamified",
-  },
-  {
-    title: "Emergency Buffer",
-    desc: "Auto-moves spare cash into a rainy-day pocket.",
+    title: "Emergency buffer",
+    copy: "Small weekly surplus gets swept into a separate reserve without asking you to think about it.",
     tag: "Safety",
   },
 ];
 
 const resources = [
   {
-    title: "Textbook Deal Finder",
-    desc: "Track required books, compare rental vs. used, and auto-alert on drops.",
-    tag: "Savings",
+    title: "Free software by major",
+    desc: "Design suites, IDEs, citation tools, and tutoring platforms grouped by discipline.",
+    meta: "Updated weekly",
   },
   {
-    title: "Major Resource Hub",
-    desc: "Curated free tools, tutorials, and career prep by major.",
-    tag: "Academic",
+    title: "Textbook market board",
+    desc: "Rental, used, PDF, library, and local listings side by side with price-drop alerts.",
+    meta: "Best for semester planning",
   },
   {
-    title: "Campus Deal Radar",
-    desc: "Student discounts near campus with weekly pushes.",
-    tag: "Local",
+    title: "Scholarships and grants",
+    desc: "Niche awards filtered by year, program, and campus-specific eligibility.",
+    meta: "Good fit for new users",
   },
   {
-    title: "Syllabus Spend Forecast",
-    desc: "Detect fees and material costs before the term starts.",
-    tag: "Planning",
+    title: "Syllabus spend forecast",
+    desc: "Flag course fees and materials before they hit your budget mid-semester.",
+    meta: "Works with uploaded syllabi",
   },
 ];
 
-const tips = [
+const investingLessons = [
   {
-    title: "Move $18 to Buffer",
-    desc: "You’re 12% under budget this week. Want to stash the extra?",
+    title: "Compounding",
+    summary: "See how small, boring weekly deposits build real long-term advantage.",
   },
   {
-    title: "Library vs. Bookstore",
-    desc: "Save $64 by borrowing your Bio 201 textbook before Feb 12.",
+    title: "Index funds",
+    summary: "A practical entry point for students who want broad exposure, not hype.",
   },
   {
-    title: "Meal Plan Sweet Spot",
-    desc: "Switch to 10 meals/week and save ~$42 this month.",
+    title: "Risk tolerance",
+    summary: "Learn what volatility feels like before you commit actual money.",
+  },
+  {
+    title: "Paper portfolio",
+    summary: "Try allocations, track outcomes, and learn without any financial risk.",
   },
 ];
-
-const goals = [
-  { label: "Spring Break Trip", progress: 62, target: "$480 / $780" },
-  { label: "Emergency Buffer", progress: 38, target: "$190 / $500" },
-  { label: "New Laptop", progress: 74, target: "$890 / $1,200" },
-];
-
-const chartBars = [60, 48, 72, 80, 52, 44, 64, 90, 58, 69];
 
 const pricingPlans = [
   {
-    name: "Starter",
+    name: "Base",
     price: "$0",
-    desc: "Core budgeting + resources",
-    perks: ["Budget capsules", "Textbook alerts", "Major resource hub"],
+    note: "Budgeting and campus resources",
+    items: ["Transaction tracking", "Resource shelf", "Textbook watchlists"],
   },
   {
-    name: "Campus+",
-    price: "$6 / mo",
-    desc: "Smart forecasting and roommates",
-    perks: ["Semester runway", "Roommate splits", "Deal radar"],
+    name: "Semester",
+    price: "$7",
+    note: "Forecasting and collaboration",
+    items: ["Runway model", "Roommate split", "Adaptive alerts"],
   },
   {
     name: "Launch",
-    price: "$12 / mo",
-    desc: "Investing 101 + goal automation",
-    perks: ["Investing guides", "Auto-savings", "Priority support"],
+    price: "$12",
+    note: "Investing and automation",
+    items: ["Investing 101", "Goal automation", "Priority support"],
   },
 ];
 
-const investingModules = [
+const settingsSections = [
   {
-    title: "Compounding 101",
-    desc: "See how small weekly deposits grow over semesters.",
-    tag: "Basics",
+    title: "Notifications",
+    body: "Control how often nudges arrive and which ones remain silent during class hours.",
   },
   {
-    title: "Risk vs. Reward",
-    desc: "Learn why diversification beats single bets.",
-    tag: "Core",
+    title: "Budget categories",
+    body: "Rename or collapse categories so the dashboard reflects how you actually spend.",
   },
   {
-    title: "Starter Portfolios",
-    desc: "Mock ETF mixes you can simulate without money.",
-    tag: "Simulate",
-  },
-  {
-    title: "Glossary",
-    desc: "Plain language for yield, expense ratio, and more.",
-    tag: "Learn",
+    title: "Connections",
+    body: "Manage cards, meal plans, and any future account linking from one place.",
   },
 ];
 
 function formatCurrency(value) {
   const sign = value < 0 ? "-" : "";
-  const abs = Math.abs(value);
-  return `${sign}$${abs.toFixed(2)}`;
+  return `${sign}$${Math.abs(value).toFixed(2)}`;
+}
+
+function getBalance(transactions) {
+  return 1450.75 + transactions.reduce((sum, item) => sum + item.amount, 0);
+}
+
+function StatStrip() {
+  return (
+    <div className="stat-strip">
+      <span>18,420 active students</span>
+      <span>$86 average monthly savings</span>
+      <span>9,312 goals funded</span>
+      <span>74 campus discount sources tracked</span>
+    </div>
+  );
+}
+
+function PageIntro({ kicker, title, copy, aside }) {
+  return (
+    <section className="page-intro">
+      <div className="page-intro-copy">
+        <p className="eyebrow">{kicker}</p>
+        <h1>{title}</h1>
+        <p className="lede">{copy}</p>
+      </div>
+      {aside ? <div className="page-intro-aside">{aside}</div> : null}
+    </section>
+  );
 }
 
 function TopBar({ onOpenDrawer }) {
@@ -174,10 +197,14 @@ function TopBar({ onOpenDrawer }) {
 
   return (
     <header className="topbar">
-      <div className="logo">
-        <span className="logo-dot" />
-        PulseBudget
-      </div>
+      <NavLink to="/" className="brand">
+        <span className="brand-mark" />
+        <div>
+          <strong>PulseBudget</strong>
+          <span>Student finance, sharpened.</span>
+        </div>
+      </NavLink>
+
       <nav className="nav">
         <NavLink to="/">Home</NavLink>
         <NavLink to="/signup">Sign up</NavLink>
@@ -187,15 +214,16 @@ function TopBar({ onOpenDrawer }) {
         <NavLink to="/pricing">Pricing</NavLink>
         <NavLink to="/settings">Settings</NavLink>
       </nav>
-      <div className="cta">
+
+      <div className="toolbar">
         {isDashboard ? (
-          <button className="primary" onClick={onOpenDrawer}>
-            Add Transaction
+          <button className="button button-primary" onClick={onOpenDrawer}>
+            Add transaction
           </button>
         ) : (
           <>
-            <button className="ghost">Log in</button>
-            <button className="primary">Create account</button>
+            <button className="button button-ghost">Log in</button>
+            <button className="button button-primary">Create account</button>
           </>
         )}
       </div>
@@ -203,39 +231,68 @@ function TopBar({ onOpenDrawer }) {
   );
 }
 
-function Landing({ safeToSpend }) {
+function LandingPage() {
   return (
     <div className="page">
-      <section className="hero">
-        <div className="hero-content">
-          <p className="eyebrow">Student budgeting that feels alive</p>
-          <h1>
-            Build a money rhythm for the semester. Track spending, get proactive
-            nudges, and make your goals feel inevitable.
-          </h1>
-          <p className="subtext">
-            PulseBudget blends campus-specific budgeting, smart alerts, and
-            animation-rich insights so your money story is clear at a glance.
-          </p>
-          <div className="hero-actions">
-            <button className="primary">Create your account</button>
-            <button className="secondary">Compare plans</button>
+      <PageIntro
+        kicker="Editorial budgeting"
+        title="A student money app that feels less like admin and more like control."
+        copy="PulseBudget combines budgeting, textbook savings, campus-specific resources, and beginner investing into one sharply designed system."
+        aside={
+          <div className="hero-panel">
+            <div className="hero-panel-top">
+              <p>Current runway</p>
+              <h2>9.4 weeks</h2>
+            </div>
+            <div className="hero-panel-grid">
+              <div>
+                <span>Safe to spend</span>
+                <strong>$74.26</strong>
+              </div>
+              <div>
+                <span>Textbook savings</span>
+                <strong>$64</strong>
+              </div>
+              <div>
+                <span>Buffer balance</span>
+                <strong>$190</strong>
+              </div>
+              <div>
+                <span>Shared bills</span>
+                <strong>3 open</strong>
+              </div>
+            </div>
           </div>
-          <div className="hero-badges">
-            <span>Real-time safe-to-spend</span>
-            <span>Semester runway</span>
-            <span>Roommate split</span>
+        }
+      />
+
+      <StatStrip />
+
+      <section className="split-layout">
+        <div className="section-block">
+          <div className="section-heading">
+            <p className="eyebrow">Why it lands</p>
+            <h2>Built around how students actually spend.</h2>
+          </div>
+          <div className="feature-list">
+            {features.map((feature) => (
+              <article key={feature.title} className="feature-row">
+                <div>
+                  <span className="feature-tag">{feature.tag}</span>
+                  <h3>{feature.title}</h3>
+                </div>
+                <p>{feature.copy}</p>
+              </article>
+            ))}
           </div>
         </div>
-        <div className="hero-card">
-          <div className="card-header">
-            <div>
-              <p className="muted">Join in under 60 seconds</p>
-              <h2>Start with a campus profile</h2>
-            </div>
-            <div className="chip positive">No credit card</div>
+
+        <aside className="signup-panel">
+          <div className="panel-heading">
+            <p className="eyebrow">Start free</p>
+            <h2>Make a clean start.</h2>
           </div>
-          <div className="auth-form">
+          <form className="stack">
             <label>
               Email
               <input placeholder="you@email.com" />
@@ -244,87 +301,15 @@ function Landing({ safeToSpend }) {
               Password
               <input type="password" placeholder="Create a password" />
             </label>
-            <button className="primary" type="button">
+            <button className="button button-primary" type="button">
               Create account
             </button>
-            <button className="ghost" type="button">
+            <button className="button button-ghost" type="button">
               Continue with Google
             </button>
-            <p className="tiny muted">
-              Already have an account? <span className="link">Log in</span>
-            </p>
-          </div>
-          <div className="hero-stats">
-            <div>
-              <p className="muted">Safe to spend</p>
-              <h3>{formatCurrency(safeToSpend)}</h3>
-              <span className="tiny">This week</span>
-            </div>
-            <div>
-              <p className="muted">Next bill</p>
-              <h3>$120</h3>
-              <span className="tiny">Dorm rent · Feb 5</span>
-            </div>
-            <div>
-              <p className="muted">Runway</p>
-              <h3>9.4 weeks</h3>
-              <span className="tiny">At current pace</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="feature-grid">
-        <div className="section-title">
-          <h2>What makes it different</h2>
-          <p className="muted">
-            Campus-aware intelligence with an interface that feels alive.
-          </p>
-        </div>
-        <div className="features">
-          {features.map((feature) => (
-            <div className="feature" key={feature.title}>
-              <span className="tag">{feature.tag}</span>
-              <h3>{feature.title}</h3>
-              <p>{feature.desc}</p>
-              <button className="ghost">Explore</button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="feature-grid">
-        <div className="section-title">
-          <h2>Free resources, real savings</h2>
-          <p className="muted">
-            Stretch your budget with academic and campus perks built in.
-          </p>
-        </div>
-        <div className="features">
-          {resources.map((resource) => (
-            <div className="feature" key={resource.title}>
-              <span className="tag">{resource.tag}</span>
-              <h3>{resource.title}</h3>
-              <p>{resource.desc}</p>
-              <button className="ghost">View resources</button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="metrics">
-        <div>
-          <p className="muted">Active students</p>
-          <h2>18,420</h2>
-        </div>
-        <div>
-          <p className="muted">Average monthly savings</p>
-          <h2>$86</h2>
-        </div>
-        <div>
-          <p className="muted">Goals funded</p>
-          <h2>9,312</h2>
-        </div>
+          </form>
+          <p className="small-copy">No credit card. Use manual tracking or connect accounts later.</p>
+        </aside>
       </section>
     </div>
   );
@@ -333,18 +318,23 @@ function Landing({ safeToSpend }) {
 function SignUpPage() {
   return (
     <div className="page">
-      <section className="page-hero">
-        <div>
-          <p className="eyebrow">Start in minutes</p>
-          <h1>Set up your student money system.</h1>
-          <p className="subtext">
-            Create a profile, pick your goals, and get a personalized budget
-            plan right away.
-          </p>
-        </div>
-        <div className="form-card">
+      <PageIntro
+        kicker="Onboarding"
+        title="Set your profile once. The app does the sorting after that."
+        copy="Use your email, pick your school and major, then set the spending priorities you actually care about this semester."
+        aside={
+          <div className="info-card">
+            <span>Setup time</span>
+            <strong>Under 3 minutes</strong>
+            <p>Manual mode is available if you do not want to connect any accounts.</p>
+          </div>
+        }
+      />
+
+      <section className="form-stage">
+        <div className="form-card form-card-large">
           <h2>Create your account</h2>
-          <form className="stack">
+          <form className="form-grid">
             <label>
               Full name
               <input placeholder="Alex Johnson" />
@@ -354,38 +344,49 @@ function SignUpPage() {
               <input placeholder="alex@email.com" />
             </label>
             <label>
-              Major
-              <input placeholder="Computer Science" />
-            </label>
-            <label>
               School
               <input placeholder="Your university" />
             </label>
             <label>
-              Weekly budget goal
+              Major
+              <input placeholder="Computer Science" />
+            </label>
+            <label>
+              Weekly budget
               <input placeholder="$200" />
             </label>
-            <button className="primary" type="button">
-              Continue
-            </button>
+            <label>
+              Main goal
+              <input placeholder="Emergency buffer" />
+            </label>
           </form>
-          <p className="tiny muted">
-            Already have an account? <span className="link">Log in</span>
-          </p>
+          <button className="button button-primary" type="button">
+            Continue
+          </button>
         </div>
-      </section>
-      <section className="steps">
-        <div className="step-card">
-          <h3>1. Connect your routines</h3>
-          <p>Link a card, meal plan, or just start manual.</p>
-        </div>
-        <div className="step-card">
-          <h3>2. Set semester goals</h3>
-          <p>Trips, tech, and emergency buffers get auto-funded.</p>
-        </div>
-        <div className="step-card">
-          <h3>3. Activate smart nudges</h3>
-          <p>Push alerts that keep you in control, not overwhelmed.</p>
+
+        <div className="rail-list">
+          <article className="rail-item">
+            <span>01</span>
+            <div>
+              <h3>Profile</h3>
+              <p>School, major, schedule rhythm, and baseline spending habits.</p>
+            </div>
+          </article>
+          <article className="rail-item">
+            <span>02</span>
+            <div>
+              <h3>Goals</h3>
+              <p>Trips, textbooks, devices, and reserve funds all become tracked targets.</p>
+            </div>
+          </article>
+          <article className="rail-item">
+            <span>03</span>
+            <div>
+              <h3>Automation</h3>
+              <p>Alerts, sweeps, and reminders only where they reduce friction.</p>
+            </div>
+          </article>
         </div>
       </section>
     </div>
@@ -395,132 +396,76 @@ function SignUpPage() {
 function DashboardPage({ transactions, onOpenDrawer }) {
   return (
     <div className="page">
-      <section className="dashboard">
-        <div className="dashboard-left">
-          <div className="section-title">
-            <h2>Budget capsules</h2>
-            <button className="ghost">Edit categories</button>
+      <PageIntro
+        kicker="Dashboard"
+        title="A dashboard that keeps the signal and drops the noise."
+        copy="Core budget status, goal progress, and active spending patterns appear first. Everything else stays secondary."
+        aside={
+          <div className="info-card">
+            <span>Current balance</span>
+            <strong>{formatCurrency(getBalance(transactions))}</strong>
+            <p>Updated from the sample transaction feed below.</p>
           </div>
-          <div className="capsules">
-            {capsules.map((cap) => {
-              const percent = Math.min((cap.value / cap.limit) * 100, 100);
+        }
+      />
+
+      <section className="dashboard-shell">
+        <div className="dashboard-main">
+          <div className="budget-grid">
+            {budgetCapsules.map((cap) => {
+              const width = Math.min((cap.value / cap.limit) * 100, 100);
               return (
-                <div className={`capsule ${cap.accent}`} key={cap.label}>
-                  <div>
-                    <p className="muted">{cap.label}</p>
-                    <h3>${cap.value}</h3>
-                    <span className="tiny">of ${cap.limit}</span>
+                <article key={cap.label} className="budget-card">
+                  <div className="budget-card-head">
+                    <span>{cap.label}</span>
+                    <strong>${cap.value}</strong>
                   </div>
                   <div className="meter">
-                    <div style={{ width: `${percent}%` }} />
+                    <div style={{ width: `${width}%` }} />
                   </div>
-                </div>
+                  <p>${cap.limit} monthly limit</p>
+                </article>
               );
             })}
           </div>
 
-          <div className="section-title">
-            <h2>Smart nudges</h2>
-            <button className="ghost">Personalize</button>
-          </div>
-          <div className="nudges">
-            {tips.map((tip) => (
-              <div className="nudge" key={tip.title}>
-                <h3>{tip.title}</h3>
-                <p>{tip.desc}</p>
-                <button className="secondary">Apply</button>
+          <div className="transaction-block">
+            <div className="section-heading section-heading-inline">
+              <div>
+                <p className="eyebrow">Activity</p>
+                <h2>Recent transactions</h2>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="dashboard-right">
-          <div className="mini-card">
-            <div className="section-title">
-              <h2>Spending pulse</h2>
-              <span className="pill">Live</span>
+              <button className="button button-ghost" onClick={onOpenDrawer}>
+                Add new
+              </button>
             </div>
-            <div className="bar-chart">
-              {chartBars.map((bar, index) => (
-                <div key={index} style={{ height: `${bar}%` }} />
-              ))}
-            </div>
-            <div className="legend">
-              <span>Highest: Fri</span>
-              <span>Lowest: Tue</span>
-            </div>
-          </div>
-
-          <div className="mini-card">
-            <div className="section-title">
-              <h2>Goals in motion</h2>
-              <button className="ghost">New goal</button>
-            </div>
-            <div className="goals">
-              {goals.map((goal) => (
-                <div className="goal" key={goal.label}>
-                  <div className="goal-header">
-                    <h3>{goal.label}</h3>
-                    <span>{goal.target}</span>
+            <div className="transaction-list">
+              {transactions.map((item) => (
+                <article key={item.id} className="transaction-row">
+                  <div>
+                    <h3>{item.name}</h3>
+                    <p>
+                      {item.category} · {item.time}
+                    </p>
                   </div>
-                  <div className="goal-bar">
-                    <div style={{ width: `${goal.progress}%` }} />
-                  </div>
-                </div>
+                  <strong className={item.amount >= 0 ? "amount-positive" : "amount-negative"}>
+                    {formatCurrency(item.amount)}
+                  </strong>
+                </article>
               ))}
             </div>
           </div>
-
-          <div className="mini-card">
-            <div className="section-title">
-              <h2>Roommate split</h2>
-              <span className="pill">3 people</span>
-            </div>
-            <div className="split-grid">
-              <div>
-                <p className="muted">You</p>
-                <h3>$52.40</h3>
-              </div>
-              <div>
-                <p className="muted">Alex</p>
-                <h3>$43.10</h3>
-              </div>
-              <div>
-                <p className="muted">Sam</p>
-                <h3>$36.75</h3>
-              </div>
-            </div>
-            <button className="secondary">Settle up</button>
-          </div>
         </div>
-      </section>
 
-      <section className="transactions">
-        <div className="section-title">
-          <h2>Live transactions</h2>
-          <button className="ghost" onClick={onOpenDrawer}>
-            Add new
-          </button>
-        </div>
-        <div className="transactions-list">
-          {transactions.map((item) => (
-            <div className="transaction" key={item.id}>
-              <div>
-                <h3>{item.name}</h3>
-                <p className="muted">
-                  {item.category} · {item.time}
-                </p>
-              </div>
-              <span
-                className={
-                  item.amount >= 0 ? "amount positive" : "amount negative"
-                }
-              >
-                {formatCurrency(item.amount)}
-              </span>
-            </div>
+        <aside className="dashboard-rail">
+          {dashboardCards.map((card) => (
+            <article key={card.title} className="info-card">
+              <span>{card.title}</span>
+              <strong>{card.value}</strong>
+              <p>{card.detail}</p>
+            </article>
           ))}
-        </div>
+        </aside>
       </section>
     </div>
   );
@@ -529,45 +474,20 @@ function DashboardPage({ transactions, onOpenDrawer }) {
 function ResourcesPage() {
   return (
     <div className="page">
-      <section className="page-hero">
-        <div>
-          <p className="eyebrow">Resource hub</p>
-          <h1>Every free perk your major deserves.</h1>
-          <p className="subtext">
-            Find textbook deals, free software, internships, and study tools in
-            one place.
-          </p>
-        </div>
-        <div className="form-card">
-          <h2>Filter resources</h2>
-          <form className="stack">
-            <label>
-              Major
-              <input placeholder="Biology, CS, Business" />
-            </label>
-            <label>
-              Class
-              <input placeholder="BIO 201" />
-            </label>
-            <label>
-              Resource type
-              <input placeholder="Textbooks, software, grants" />
-            </label>
-            <button className="primary" type="button">
-              Apply filters
-            </button>
-          </form>
-        </div>
-      </section>
+      <PageIntro
+        kicker="Resources"
+        title="Make the app useful even before someone tracks their first dollar."
+        copy="Textbook savings, free software, grants, and major-specific resources belong in the same system as budgeting because they directly change the outcome."
+      />
 
-      <section className="features">
+      <section className="card-grid">
         {resources.map((resource) => (
-          <div className="feature" key={resource.title}>
-            <span className="tag">{resource.tag}</span>
-            <h3>{resource.title}</h3>
+          <article key={resource.title} className="resource-card">
+            <span>{resource.meta}</span>
+            <h2>{resource.title}</h2>
             <p>{resource.desc}</p>
-            <button className="ghost">Open resource</button>
-          </div>
+            <button className="button button-ghost">Open resource</button>
+          </article>
         ))}
       </section>
     </div>
@@ -577,60 +497,62 @@ function ResourcesPage() {
 function InvestingPage() {
   return (
     <div className="page">
-      <section className="page-hero">
-        <div>
-          <p className="eyebrow">Investing 101</p>
-          <h1>Learn investing without the pressure.</h1>
-          <p className="subtext">
-            Build confidence with short lessons, simulators, and risk-friendly
-            templates.
-          </p>
+      <PageIntro
+        kicker="Investing 101"
+        title="Teach long-term money habits without turning the app into a trading product."
+        copy="The investing layer stays educational and calm: simple lessons, paper portfolios, and plain-language risk framing."
+        aside={
+          <div className="hero-panel">
+            <div className="hero-panel-top">
+              <p>Starter example</p>
+              <h2>$15 / week</h2>
+            </div>
+            <div className="hero-panel-grid">
+              <div>
+                <span>After 1 year</span>
+                <strong>$780</strong>
+              </div>
+              <div>
+                <span>After 4 years</span>
+                <strong>$3,120</strong>
+              </div>
+            </div>
+          </div>
+        }
+      />
+
+      <section className="split-layout split-layout-tight">
+        <div className="lesson-list">
+          {investingLessons.map((lesson, index) => (
+            <article key={lesson.title} className="lesson-row">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <h3>{lesson.title}</h3>
+                <p>{lesson.summary}</p>
+              </div>
+            </article>
+          ))}
         </div>
-        <div className="form-card">
-          <h2>Starter simulator</h2>
+        <div className="simulator-card">
+          <p className="eyebrow">Paper portfolio</p>
+          <h2>Run a no-risk simulation.</h2>
           <form className="stack">
             <label>
-              Weekly deposit
-              <input placeholder="$10" />
+              Weekly amount
+              <input placeholder="$15" />
             </label>
             <label>
               Timeline
-              <input placeholder="2 years" />
+              <input placeholder="4 years" />
             </label>
             <label>
-              Risk comfort
-              <input placeholder="Low / Medium / High" />
+              Risk profile
+              <input placeholder="Conservative" />
             </label>
-            <button className="primary" type="button">
-              Run simulation
+            <button className="button button-primary" type="button">
+              Start simulation
             </button>
           </form>
-        </div>
-      </section>
-
-      <section className="features">
-        {investingModules.map((module) => (
-          <div className="feature" key={module.title}>
-            <span className="tag">{module.tag}</span>
-            <h3>{module.title}</h3>
-            <p>{module.desc}</p>
-            <button className="ghost">Start lesson</button>
-          </div>
-        ))}
-      </section>
-
-      <section className="metrics">
-        <div>
-          <p className="muted">Starter target</p>
-          <h2>$15 / week</h2>
-        </div>
-        <div>
-          <p className="muted">Average student portfolio</p>
-          <h2>$1,240</h2>
-        </div>
-        <div>
-          <p className="muted">Time to first $100</p>
-          <h2>7 weeks</h2>
         </div>
       </section>
     </div>
@@ -640,29 +562,24 @@ function InvestingPage() {
 function PricingPage() {
   return (
     <div className="page">
-      <section className="page-hero">
-        <div>
-          <p className="eyebrow">Pricing</p>
-          <h1>Plans built for student budgets.</h1>
-          <p className="subtext">
-            Start free and upgrade when you want smarter forecasting or
-            investing lessons.
-          </p>
-        </div>
-      </section>
+      <PageIntro
+        kicker="Pricing"
+        title="Pricing that still makes sense on a student budget."
+        copy="The free tier is useful. Paid plans only unlock modeling, collaboration, and automation layers that justify themselves."
+      />
       <section className="pricing-grid">
         {pricingPlans.map((plan) => (
-          <div className="pricing-card" key={plan.name}>
-            <h3>{plan.name}</h3>
+          <article key={plan.name} className="pricing-card">
+            <span>{plan.name}</span>
             <h2>{plan.price}</h2>
-            <p className="muted">{plan.desc}</p>
+            <p>{plan.note}</p>
             <ul>
-              {plan.perks.map((perk) => (
-                <li key={perk}>{perk}</li>
+              {plan.items.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-            <button className="primary">Choose plan</button>
-          </div>
+            <button className="button button-primary">Choose plan</button>
+          </article>
         ))}
       </section>
     </div>
@@ -672,41 +589,20 @@ function PricingPage() {
 function SettingsPage() {
   return (
     <div className="page">
-      <section className="page-hero">
-        <div>
-          <p className="eyebrow">Settings</p>
-          <h1>Make PulseBudget yours.</h1>
-          <p className="subtext">
-            Control alerts, budgets, and how your money is categorized.
-          </p>
-        </div>
-      </section>
-      <section className="settings-grid">
-        <div className="settings-card">
-          <h3>Notifications</h3>
-          <p className="muted">Choose which nudges you want to receive.</p>
-          <div className="toggle-list">
-            <label>
-              <input type="checkbox" defaultChecked /> Weekly budget check-in
-            </label>
-            <label>
-              <input type="checkbox" defaultChecked /> Textbook price alerts
-            </label>
-            <label>
-              <input type="checkbox" /> Investing lesson reminders
-            </label>
-          </div>
-        </div>
-        <div className="settings-card">
-          <h3>Budget preferences</h3>
-          <p className="muted">Set your default weekly limit and categories.</p>
-          <button className="secondary">Edit budgets</button>
-        </div>
-        <div className="settings-card">
-          <h3>Connected accounts</h3>
-          <p className="muted">Manage cards, meal plans, and payout sources.</p>
-          <button className="secondary">Manage connections</button>
-        </div>
+      <PageIntro
+        kicker="Settings"
+        title="Keep the app tuned to your life, not the default."
+        copy="Students do not all budget the same way. Preferences, categories, and connection states should be easy to adjust."
+      />
+      <section className="card-grid">
+        {settingsSections.map((section) => (
+          <article key={section.title} className="resource-card">
+            <span>Preference</span>
+            <h2>{section.title}</h2>
+            <p>{section.body}</p>
+            <button className="button button-ghost">Manage</button>
+          </article>
+        ))}
       </section>
     </div>
   );
@@ -721,52 +617,40 @@ export default function App() {
     amount: "",
   });
 
-  const balance = useMemo(() => {
-    const total = transactions.reduce((sum, item) => sum + item.amount, 0);
-    return 1450.75 + total;
-  }, [transactions]);
-
-  const safeToSpend = useMemo(() => {
-    const weeklyBudget = 210;
-    const spent = transactions
-      .filter((item) => item.amount < 0)
-      .reduce((sum, item) => sum + Math.abs(item.amount), 0);
-    return Math.max(weeklyBudget - spent, 0);
-  }, [transactions]);
-
   function handleSubmit(event) {
     event.preventDefault();
-    if (!form.name || !form.amount) return;
-    const amount = Number(form.amount);
-    const newItem = {
-      id: Date.now(),
-      name: form.name,
-      category: form.category,
-      amount: amount,
-      time: "Just now",
-    };
-    setTransactions((prev) => [newItem, ...prev]);
+    if (!form.name || !form.amount) {
+      return;
+    }
+
+    setTransactions((current) => [
+      {
+        id: Date.now(),
+        name: form.name,
+        category: form.category,
+        amount: Number(form.amount),
+        time: "Just now",
+      },
+      ...current,
+    ]);
+
     setForm({ name: "", category: "Food", amount: "" });
     setDrawerOpen(false);
   }
 
   return (
     <div className="app">
-      <div className="bg">
-        <div className="orb orb-one" />
-        <div className="orb orb-two" />
-        <div className="orb orb-three" />
-        <div className="grid" />
+      <div className="backdrop">
+        <div className="backdrop-gradient" />
+        <div className="backdrop-lines" />
+        <div className="backdrop-noise" />
       </div>
 
       <TopBar onOpenDrawer={() => setDrawerOpen(true)} />
 
       <main>
         <Routes>
-          <Route
-            path="/"
-            element={<Landing safeToSpend={safeToSpend} />}
-          />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route
             path="/dashboard"
@@ -784,22 +668,26 @@ export default function App() {
         </Routes>
       </main>
 
-      <div className={`drawer ${drawerOpen ? "open" : ""}`}>
-        <div className="drawer-header">
-          <h2>New transaction</h2>
-          <button className="ghost" onClick={() => setDrawerOpen(false)}>
+      <aside className={`drawer ${drawerOpen ? "drawer-open" : ""}`}>
+        <div className="drawer-head">
+          <div>
+            <p className="eyebrow">Quick add</p>
+            <h2>New transaction</h2>
+          </div>
+          <button className="button button-ghost" onClick={() => setDrawerOpen(false)}>
             Close
           </button>
         </div>
-        <form className="drawer-form" onSubmit={handleSubmit}>
+
+        <form className="stack" onSubmit={handleSubmit}>
           <label>
             Name
             <input
               value={form.name}
               onChange={(event) =>
-                setForm((prev) => ({ ...prev, name: event.target.value }))
+                setForm((current) => ({ ...current, name: event.target.value }))
               }
-              placeholder="Ex: Bookstore"
+              placeholder="Bookstore"
             />
           </label>
           <label>
@@ -807,7 +695,7 @@ export default function App() {
             <select
               value={form.category}
               onChange={(event) =>
-                setForm((prev) => ({ ...prev, category: event.target.value }))
+                setForm((current) => ({ ...current, category: event.target.value }))
               }
             >
               <option>Food</option>
@@ -823,19 +711,18 @@ export default function App() {
             <input
               value={form.amount}
               onChange={(event) =>
-                setForm((prev) => ({ ...prev, amount: event.target.value }))
+                setForm((current) => ({ ...current, amount: event.target.value }))
               }
               placeholder="-18.50"
             />
           </label>
-          <button className="primary" type="submit">
+          <button className="button button-primary" type="submit">
             Save transaction
           </button>
         </form>
-        <div className="drawer-note">
-          <p>Tip: Use negative numbers for expenses, positive for income.</p>
-        </div>
-      </div>
+
+        <p className="small-copy">Use negative values for expenses and positive values for income.</p>
+      </aside>
     </div>
   );
 }
